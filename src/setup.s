@@ -1,60 +1,61 @@
-.text
+.file "setup.s"
+stack_begin = 0x1000
 .code16
+.text
 
-.globl reset_disk
-.globl read_disk_sector
+begin:
+	cli
+	lgdt	gdtr
+	movl	%cr0,	%eax
+	orl	$0x01,	%eax
+	movl	%eax,	%cr0
+
+	jmp	reset_pipeline
+reset_pipeline:
+	ljmp	$0x08,	$set_cs
+set_cs:
+
+.code32
+	movw	$0x10,	%ax
+	movw	%ax,	%ds
+	movw	%ax,	%es
+	movw	%ax,	%ss
+	
+	movl	$stack_begin,	%esp
+
+	#hlt
+	call startup
+
+gdtr:
+gdtr_limit: .word gdt_end - gdt -1
+gdtr_base: .long gdt
+
+.align 8
+gdt:
+
+gdt_null:
+.word	0x00
+.word	0x00
+.byte	0x00
+.byte	0x00
+.byte	0x00
+.byte	0x00
+
+gdt_kernel_cs:
+.word	0xffff
+.word	0x00
+.byte	0x00
+.byte	0x98
+.byte	0xdf
+.byte 	0x00
 
 
-reset_disk:
-	xor	%al,	%al
-	xor	%ah,	%ah
-	int	$0x13
-	ret
+gdt_kernel_ds:
+.word	0xffff
+.word	0x00
+.byte	0x00
+.byte 	0x92
+.byte	0xdf
+.byte 	0x00
 
-# read disk sector
-#	params:
-#		es:di = dest buffer address
-#		si = source sector no (0 - 2879)
-#		dl = drive no
-#	returns:
-#		al = error code. 0 if succeeded.
-read_disk_sector:
-	# save drive no
-	pushw	%dx
-	xorw	%dx, %dx
-	movw	%si, %ax
-	
-	# logical sector to track no
-	movb	$fd_sector_per_track, %dl
-	divb	%dl
-	
-	# track no
-	movb	%al, %ch
-	shrb	$0x01, %ch
-	
-	# head no
-	jnc		head_0
-	mov		$0x01, %dh
-head_0:
-	
-	# sector no
-	movb	%ah, %cl
-	incb	%cl
-	
-	# dest buffer
-	movw	%di, %bx
-	
-	# drive no
-	popw	%ax
-	movb	%al, %dl
-	
-	# sector count
-	movb	$0x01, %al
-	
-	# read command
-	movb	$0x02, %ah
-	
-	# execute
-	int		$0x13
-	
-	ret
+gdt_end:

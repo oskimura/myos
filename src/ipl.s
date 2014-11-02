@@ -1,6 +1,6 @@
 # ipl.s
 
-.globl fd_sector_per_track
+.global fd_sector_per_track
 
 boot_begin = 0x7c00
 ipl_size = 0x200
@@ -72,7 +72,7 @@ begin:
 set_cs:
 	#show message
 	movw	$BOOT_MSG,	%si
-	call print
+	call 	print
 
 	#reset disk drive
 	movb	boot_drive, %dl
@@ -89,8 +89,6 @@ set_cs:
 	movw	$ipl_end, %di
 	movb	boot_drive, %dl
 	movw	$kernel_begin_sector, %si
-
-
 read_kernel:
 	call	read_disk_sector
 	jc	error
@@ -109,6 +107,7 @@ advance_read_kernel_sector:
 	call print
 #jump to setup
 	jmp	ipl_end
+
 error:
 	movw	$ERROR_MSG, %si
 	call	print
@@ -129,11 +128,73 @@ print_char:
 print_end:
 	ret
 
+
+# reset disk system
+#	params:
+#		dl = drive no
+#	returns:
+#		al = error code. 0 if succeeded.
+reset_disk:
+	xor		%al, %al
+	xor		%ah, %ah
+	int		$0x13
+	ret
+
+# read disk sector
+#	params:
+#		es:di = dest buffer address
+#		si = source sector no (0 - 2879)
+#		dl = drive no
+#	returns:
+#		al = error code. 0 if succeeded.
+read_disk_sector:
+	# save drive no
+	pushw	%dx
+	xorw	%dx, %dx
+	movw	%si, %ax
+	
+	# logical sector to track no
+	movb	$fd_sector_per_track, %dl
+	divb	%dl
+	
+	# track no
+	movb	%al, %ch
+	shrb	$0x01, %ch
+	
+	# head no
+	jnc		head_0
+	mov		$0x01, %dh
+head_0:
+	
+	# sector no
+	movb	%ah, %cl
+	incb	%cl
+	
+	# dest buffer
+	movw	%di, %bx
+	
+	# drive no
+	popw	%ax
+	movb	%al, %dl
+	
+	# sector count
+	movb	$0x01, %al
+	
+	# read command
+	movb	$0x02, %ah
+	
+	# execute
+	int		$0x13
+	
+	ret
+
+
 boot_drive:	.byte	0x00
 BOOT_MSG: .string "Hello,World!\r\n"
 DISK_RESET_MSG: .string "Succes reset!\r\n"
 DISK_READ_MSG: .string "Succes read disk!\r\n"
 ERROR_MSG: .string "Disk error!\r\n"
+
 
 
 # boot signature.
