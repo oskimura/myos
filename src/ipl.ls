@@ -3,7 +3,9 @@ SECTIONS {
 	_kernel_begin = .;
 	.ipl 0x1000: {
 		ipl.o;
-		setup.o
+		setup.o;
+		startup.o
+		video.o
 	}
 	.=ALIGN(32);
 	_kernel_end = .;

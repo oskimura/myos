@@ -2,19 +2,11 @@
 #include "mem.h"
 #include "video.h"
 
-typedef struct video_ {
-	unsigned short crt_port;
-	unsigned char crt_width;
-	unsigned char crt_height;
-	unsigned short cur_pos;
-	unsigned short *vram;
-} video;
-
 void set_cur(video *v)
 {
 	outb(v->crt_port,15);
 	outb(v->crt_port+1,v->cur_pos);
-	outb(v->cur_pos,14);
+	outb(v->crt_port,14);
 	outb(v->crt_port+1,v->cur_pos>>8);
 }
 
@@ -41,7 +33,7 @@ void clrscr(video *v)
 void putchar(video *v, char c)
 {
 	switch (c) {
-	case 'r':
+	case '\r':
 		v->cur_pos -= v->cur_pos % v->crt_width;
 		break;
 	case '\n':
