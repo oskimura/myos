@@ -9,11 +9,11 @@ kernel: $(OBJS)
 clean:
 	-rm -f fd.img ipl.bin ipl.exe $(OBJS)
 
-%.o:%s
-	as -o $@ $<
+%.o:%.S
+	gcc -g -g3 -gdwarf-2 -ffreestanding -fno-common -fno-builtin -fomit-frame-pointer -c -o $@ $<
 
 %.o:%.c
 	gcc -o $@ -c $<
 
-ipl.o: ipl.s
-setup.o: setup.s
+ipl.o: ipl.S
+setup.o: setup.S
