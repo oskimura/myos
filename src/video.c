@@ -70,3 +70,58 @@ void puts(video* v,const char *str)
 	}
 }
 
+
+char *uint_to_str(char *buf, unsigned src, int base) 
+{
+	char *p = buf;
+	char *p1,*p2;
+
+	do {
+		*p++ = "0123456789ABCDEF"[src%base];
+	} while(src/=base);
+	*p = 0;
+	for (p1=buf,p2=p-1; p1<p2; p++,p2--) {
+		char tmp = *p1;
+		*p1 = *p2;
+		*p2 = tmp;
+	}
+	return buf;
+}
+
+
+void printf(video* v, char *fmt,...)
+{
+	char **arg = (char**) &fmt;
+	char c;
+	arg++;
+
+	while((c=*fmt++) != 0) {
+		if (c != '%') {
+			putchar(v, c);
+		}
+		else {
+			char buf[64];
+			char *p;
+			c = *fmt++;
+			switch (c) {
+			case 'd' :
+				if (0 > *((int*) arg)) {
+					putchar(v,'-');
+					*((int*)arg) = -1;
+				}
+				p = uint_to_str(buf,*((unsigned *) arg++),10);
+				goto print_s;
+			case 'x' :
+				p = uint_to_str(buf,*((unsigned*) arg++), 16);
+				goto print_s;
+			case 's' :
+				p = *arg++;
+print_s:
+				printf(v,p);
+			default :
+				putchar(v,c);
+			}
+		}
+	}
+}
+
