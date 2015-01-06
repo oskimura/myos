@@ -1,6 +1,11 @@
 #ifndef MEM_H
 #define MEMH
 
+#define KERNEL_CODE 0x08
+#define KERNEL_DATA 0x10
+
+#define INT_GATE 0x8e
+
 static __inline__ void memsetw(void* dest, unsigned short val, unsigned int count)
 {
 	int d0,d1;

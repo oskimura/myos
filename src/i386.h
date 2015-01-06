@@ -13,6 +13,16 @@ static __inline__ unsigned char inb(unsigned short port)
 	return val;
 }
 
+static __volatile__ void enable() 
+{
+	__asm__ __volatile__("sti");
+}
+
+static __inline__ void disable()
+{
+	__asm__ __volatile__("cli");
+}
+
 static __inline__ void hlt() 
 {
 	__asm__ __volatile__("hlt");

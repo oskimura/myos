@@ -1,5 +1,7 @@
 #include "i386.h"
 #include "video.h"
+#include "interrupt.h"
+
 
 extern void startup();
 void startup() {
@@ -11,5 +13,17 @@ void startup() {
 	init(&v);
 	puts(&v,str);
 	
-	while(1) {;}
+	init_interrupts();
+	puts(&v, "end\n");
+
+	while(1) {
+		hlt();
+	}
+}
+
+
+void init_bss()
+{
+
+
 }

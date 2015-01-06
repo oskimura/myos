@@ -1,4 +1,4 @@
-OBJS = ipl.o setup.o startup.o video.o
+OBJS = ipl.o setup.o startup.o video.o interrupt.o 
 
 kernel: $(OBJS)
 	ld -nostdlib --traditional-format -T ipl.ls -Map kernel.map -o kernel.exe ipl.o setup.o startup.o video.o interrupt.o
