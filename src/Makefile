@@ -1,11 +1,8 @@
 OBJS = ipl.o setup.o startup.o video.o interrupt.o 
 
 kernel: $(OBJS)
-	ld -nostdlib --traditional-format -T ipl.ls -Map kernel.map -o kernel.exe ipl.o setup.o startup.o video.o interrupt.o
-	objcopy  -O binary kernel.exe kernel.bin
-	dd if=/dev/zero of=fd.img count=2880
-	dd if=kernel.bin of=fd.img conv=notrunc
-	
+	ld -nostdlib --traditional-format -Ttext=0x100000 -Map kernel.map --oformat elf32-i386 -o kernel.exe head.o startup.o video.o interrupt.o
+
 clean:
 	rm -f fd.img ipl.bin ipl.exe $(OBJS)
 
@@ -17,3 +14,4 @@ clean:
 
 ipl.o: ipl.S
 setup.o: setup.S
+head.o: head.S
