@@ -10,6 +10,7 @@ void startup(unsigned long mboot_magic, multiboot_info *mboot_info) {
 	unsigned char *str = "hello\r\n";
 	unsigned char c;
 	struct video_ v;
+	init_gdtr();
 	init(&v);
 	puts(&v,str);
 
@@ -33,9 +34,14 @@ void startup(unsigned long mboot_magic, multiboot_info *mboot_info) {
            mmap->length_high, mmap->length_low,
            mmap->type);
   }
-	
-	init_interrupts();
+
+
+
 	puts(&v, "end\n");
+	init_interrupts();
+
+
+
 
 	while(1) {
 		hlt();
