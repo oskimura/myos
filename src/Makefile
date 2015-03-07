@@ -1,7 +1,7 @@
-OBJS = ipl.o setup.o startup.o video.o interrupt.o 
+OBJS =  head.o startup.o video.o interrupt.o  segment.o
 
 kernel: $(OBJS)
-	ld -nostdlib --traditional-format -Ttext=0x100000 -Map kernel.map --oformat elf32-i386 -o kernel.exe head.o startup.o video.o interrupt.o
+	ld -nostdlib --traditional-format -Ttext=0x100000 -Map kernel.map --oformat elf32-i386 -o kernel.exe   $(OBJS)
 
 clean:
 	rm -f fd.img ipl.bin ipl.exe $(OBJS)
