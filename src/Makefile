@@ -1,4 +1,4 @@
-OBJS =  head.o startup.o video.o interrupt.o  segment.o
+OBJS =  head.o startup.o video.o interrupt.o  segment.o timer.o
 
 kernel: $(OBJS)
 	ld -nostdlib --traditional-format -Ttext=0x100000 -Map kernel.map --oformat elf32-i386 -o kernel.exe   $(OBJS)
