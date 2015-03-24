@@ -1,7 +1,7 @@
-OBJS =  head.o startup.o video.o interrupt.o  segment.o timer.o interrupt_functions.o
+OBJS =  head.o startup.o video.o interrupt.o  segment.o timer.o interrupt_functions.o mm.o
 
 kernel: $(OBJS)
-	ld -nostdlib --traditional-format -Ttext=0x100000 -Map kernel.map --oformat elf32-i386 -o kernel.exe   $(OBJS)
+	ld -nostdlib --traditional-format -T link.ls -Map kernel.map --oformat elf32-i386 -o kernel.exe   $(OBJS)
 
 clean:
 	rm -f fd.img ipl.bin ipl.exe $(OBJS)

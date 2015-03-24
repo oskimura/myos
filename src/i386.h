@@ -27,4 +27,52 @@ static __inline__ void hlt()
 {
 	__asm__ __volatile__("hlt");
 }
+
+static __inline__ unsigned char get_low_mem_size()
+{
+	long success;
+	unsigned char size;
+	unsigned char status;
+	int ax;
+	__asm__ __volatile__("int $0x12":"=a"(ax));
+
+	status = ((ax>>4)&0xff);	
+	size = (ax&0xff);
+	return size;
+}
+
+static __volatile__ unsigned int get_extend_mem_size()
+{
+	char ax;	
+
+	__asm__ __volatile__("movb %%al,%0 \n\t" 
+			     "int $0x15\n\t"
+			     : "=a"(ax)
+			     : "g"(18));
+
+	return ax;
+}
+
+
+/* static __volatile__ get_mem() */
+/* { */
+/*   __asm__ __volatile__( */
+/* 		       "pushad" */
+/* 		       "xor %ebx %ebx" */
+/* 		       "xor bp" */
+/* 		       "mov 'PAMS,' %edx" */
+/* 		       "mov $0xe820, %eax" */
+/* 		       "mov $24, $ecx" */
+/* 		       "int $0x15" */
+/* 		       "jc error" */
+/* 		       "cmp 'PAMS', %eax" */
+/* 		       "jne error" */
+/* 		       "test %ebx,%ebx" */
+/* 		       "je error" */
+/* 		       "jmp start" */
+/* 		       ); */
+  
+/* } */
+
+
 #endif
