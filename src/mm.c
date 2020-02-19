@@ -4,17 +4,18 @@
 #define MEMORY_BLOCK_SIZE 4096
 #define	KERNEL_START	0x00100000
 
-extern void _text_start;
-extern void _text_end;
-extern void _bss_start;
-extern void _bss_end;
+extern unsigned int _text_start;
+extern unsigned int _text_end;
+extern unsigned int _bss_start;
+extern unsigned int _bss_end;
 
 
 static memory_info mm;
 
 
+int get_kernel_size();
 
-int __inline__ get_kernel_size() 
+int __inline__ get_kernel_size()
 {
   return &_bss_end - &_text_start;
 }

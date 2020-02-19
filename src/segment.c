@@ -3,6 +3,7 @@
 segment_descriptor gdt[NUM_GDT];
 gdtr gdt_;
 
+extern void init_gdtr();
 void __inline__ init_gdtr()
 {
   gdt[0].limit_low = 0;

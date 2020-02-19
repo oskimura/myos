@@ -14,7 +14,6 @@ void startup(unsigned long mboot_magic, multiboot_info *mboot_info) {
 	init(&v);
 	puts(&v,str);
 
-                    
  if(mboot_magic != MULTI_BOOTLOADER_MAGIC) {
    printf(&v,"Error: Invalid magic number");
     return;
